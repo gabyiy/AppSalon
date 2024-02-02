@@ -1,0 +1,10 @@
+@use "base/variables" as v;
+@use "base/mixins" as m;
+
+.boton {
+    //aici includem butonu care il avem facut in mixin care ia ca 
+    // culuarea de fundal si culuare textului
+    @include m.boton(v.$azul ,v.$blanco);
+
+    
+}

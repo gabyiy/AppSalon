@@ -1,0 +1,22 @@
+@use "base/variables" as v;
+@use "base/mixins" as m;
+
+
+.acciones{
+//folosim variabila de 5 rem
+    margin-top: v.$separacion;
+
+    //tot ce e mai mare de tablet o sa utilizeze dispay flex pentru a face ca teztu sa fie
+    //unu langa altu si sa nu ocupe tot spatiu cum ar fi cu bloc
+    @include m.tablet{
+        display: flex;
+        justify-content: space-between;
+    }
+    a{
+        color: v.$blanco;
+        display: block;
+        //folosim clac sa sa impartim separare in 2 adica ne raman 2.5rem
+        margin-bottom: calc( v.$separacion / 2);
+        text-align: center;
+    }
+}

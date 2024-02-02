@@ -115,6 +115,12 @@ class ActiveRecord {
         $resultado = self::consultarSQL($query);
         return array_shift( $resultado ) ;
     }
+    //Cauta de forma dinamica un atribut in functie de columna si valuare 
+    public static function where($columna,$value) {
+        $query = "SELECT * FROM " . static::$tabla  ." WHERE ${columna} = '${value}'";
+        $resultado = self::consultarSQL($query);
+        return array_shift( $resultado ) ;
+    }
 
     // Obtener Registros con cierta cantidad
     public static function get($limite) {
@@ -131,9 +137,9 @@ class ActiveRecord {
         // Insertar en la base de datos
         $query = " INSERT INTO " . static::$tabla . " ( ";
         $query .= join(', ', array_keys($atributos));
-        $query .= " ) VALUES (' "; 
+        $query .= " ) VALUES ('"; 
         $query .= join("', '", array_values($atributos));
-        $query .= " ') ";
+        $query .= "') ";
 
         // Resultado de la consulta
         $resultado = self::$db->query($query);

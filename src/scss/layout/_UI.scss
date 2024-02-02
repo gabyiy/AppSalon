@@ -1,0 +1,35 @@
+//utilizam use ca sa putem folosi ce avem in base/variable si le definim ca v
+@use "base/variables" as v;
+@use "base/mixins" as m;
+
+
+
+.contenedor-app {
+//folosim mixinu de tablet 
+    @include m.tablet{
+        display: grid;
+//iar aici inpartim ecranu in doua parti egale
+        grid-template-columns: repeat(2,1fr);
+      //  si o altura minima de 100 view pwer height
+        min-height: 100vh;
+    }
+
+    .imagen {
+        height: 20rem;
+        background-image: url("../img/1.jpg");
+        background-size: cover;
+        background-position: center center;
+        //asa spunem cand ajunge in mod tablet sa ocupe tot spatiu
+        @include m.tablet{
+            height: auto;
+        }
+    }
+
+    .app{
+        //asa specificam sa nu ocupe tot ecranu
+        width: 96%;
+        //iar asa sa fie centrat
+        margin:0 auto;
+        padding: 3rem 0;
+    }
+}
