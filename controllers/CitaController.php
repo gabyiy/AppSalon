@@ -1,6 +1,6 @@
 <?php
 
-namespace Model;
+namespace Controllers;
 use MVC\Router;
 
 class CitaController{
