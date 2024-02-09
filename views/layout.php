@@ -13,7 +13,8 @@
         <div class="app">    <?php echo $contenido; ?>
 </div>
     </div>
-
-            
+    <!-- spenem asta sa ne arate variabila script in unele pagini in careo avem iar in altele nu -->
+      <?php  echo $script ?? "";
+     ?>      
 </body>
 </html>

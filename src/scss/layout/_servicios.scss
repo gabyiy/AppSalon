@@ -1,0 +1,17 @@
+@use "base/variable" as v ;
+@use "base/mixins" as m;
+
+
+.listado-servicios{
+//in marimea mai mare vrem sa se vada in do columne
+display: grid;
+gap: 2rem;
+@include m.grid(2,2rem);
+
+@include m.tablet{
+    @include m.grid(2, 2rem);
+}
+    .servicio{
+
+    }
+}

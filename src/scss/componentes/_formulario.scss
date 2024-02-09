@@ -20,5 +20,10 @@ align-items: center;
         flex: 1;
         border: none;
         padding: calc(v.$separacion / 4);
+        &:disabled{
+            background-color: lighten(v.$negro,30%);
+            color: v.$blanco;
+            cursor: not-allowed;
+        }
     }
 }
