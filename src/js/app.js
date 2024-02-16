@@ -6,6 +6,14 @@ let paso =1;
 const pasoInicial= 1
 const pasoFinal = 3;
 
+
+//obiectu unde salvam toate citele
+const cita={
+nombre : "",
+fecha:"",
+hora:"",
+servicios:[]
+}
 //initializam js in pagina
 
 document.addEventListener("DOMContentLoaded",function(){
@@ -23,7 +31,10 @@ function iniciarApp(){
     paginaAnterior()
 
     consultarAPI()// Consulteaza api in backend php
-
+    nombreCliente() //adaugam numele clientului la obiectul cita
+    selecionarFecha() //adaugam data la obiectul cita
+    selecionarHora() //Adauga ora in obiectul cita
+    mostrarResumen()//Ne arata resumele citei
 }
 function monstrarSeccion(){
 //Adaugam ocultar la clasa monstrar asa o sa dispara clasa mostrar in caz ca apasam pe alt buton
@@ -93,6 +104,8 @@ function botonesPaginador(){
     }else if(paso===3){
         botonSiguente.classList.add("ocultar");
         botonAterior.classList.remove("ocultar")
+        //folosim functia asta ca in caz ca ajungem la resumen sa ne apara resumeul citei
+        mostrarResumen()
     }else{
         botonAterior.classList.remove("ocultar");
         botonSiguente.classList.remove("ocultar")
@@ -166,6 +179,11 @@ function monstrarServicios(servicios){
         //asa ii creem un id personalizat divului
         servicioDiv.dataset.idServicio= id
 
+        //aici facem un colback cand dam click pe servicio div si activam functia cu 
+        //toate serviciile
+        servicioDiv.onclick=function(){
+            selectionarServicio(servicio)
+        }
         //iar asa adaugam in div parafurile
         servicioDiv.appendChild(nombreServicio)
         servicioDiv.appendChild(precioServicio)
@@ -173,4 +191,162 @@ function monstrarServicios(servicios){
         //iar asa adaugam dinvul asta in alt dinv cu id servicios
         document.querySelector("#servicios").appendChild(servicioDiv)
     })
+}
+
+function selectionarServicio(servicio){
+    const {id} = servicio
+    //extrangem serviciile din cita
+    const {servicios}=cita
+
+
+    //identificam de forma dinamica elementul caruia ii dam click
+const divServicio = document.querySelector(`[data-id-servicio="${id}"]`)
+
+//vedem daca un serviiu a fost adaugat
+
+if(servicios.some(agregado =>agregado.id=== id)){
+
+    cita.servicios=     servicios.filter(agregado=>agregado.id !==id)
+    divServicio.classList.remove("selecionado")
+}
+else{
+    
+    //face o copie la servici si adaugam serviciul urmator
+  cita.servicios= [...servicios,servicio]
+
+  //folosim am sa adaugam o clasa la serviciu care a fost deja selectionat adaugandoui o clasa
+  divServicio.classList.add("selecionado")
+}
+  
+}
+
+function nombreCliente(){
+    const nombre = document.querySelector("#nombre")
+    cita.nombre= nombre.value
+
+
+}
+
+function selecionarFecha(){
+    const inputFecha = document.querySelector("#fecha")
+    
+//activam listeneru si scoate valuare dati
+    inputFecha.addEventListener("input",function(e){
+
+        //selectam datili in finctie de zilele saptamani
+    const dia = new Date(e.target.value).getUTCDay()
+        //iar asa specificam ca nu pot face cite in wekkend
+        if([6,0].includes(dia)){
+            //spunem ca sa fie un string gol ca sa nu il salveze in obiect
+            e.target.value=""
+            monstrarAlerta("fines de semana nepermitido", "error",".formulario")
+        }
+        cita.fecha= e.target.value
+    })
+}
+function selecionarHora(){
+    const inputHora = document.querySelector("#hora")
+    inputHora.addEventListener("input",function(e){
+        const horaCita = e.target.value
+        //iar asa facem si alegem doar ora nu si minutele
+        const hora = horaCita.split(":")[0]
+        if(hora <10 || hora >17){
+            e.target.value=""
+            monstrarAlerta("No puede pedir una cita apartir de las 17", "error",".formulario")
+        }else{
+            cita.hora = e.target.value
+        }
+    })
+}
+//avem mai multi paremtri cum ar fi mesajul  de ce tip de ex error etc ,elementul find de ex divul selecionat
+//si desaparece pentru ca mesajul de erroare sa dispara doar in anumite conditi
+ function monstrarAlerta(mensaje ,tipo,elemento,desparece=true){
+    //asta facem ca sa nu ne aparam mai mule alerte
+    const alertaPrevia =    document.querySelector(".alertas")
+    //in caz ca avem o alta alerta care nu a disparut vrem sa o scoatem pentru a genera altele 
+    if(alertaPrevia) {
+
+        alertaPrevia.remove()
+    }
+
+    //Script pentru crearea alertei
+const alerta = document.createElement("div")
+alerta.textContent=mensaje
+alerta.classList.add("alertas")
+alerta.classList.add(tipo)
+const referencia = document.querySelector(elemento)
+referencia.appendChild(alerta)
+
+//si aici spunem ca dupa 3 secunde sa dispara alerta
+if(desparece){
+    setTimeout(() => {
+        alerta.remove()
+    }, 3000);
+}
+
+}
+
+
+function mostrarResumen(){
+const resumen = document.querySelector(".contenido-resumen")
+//Curatam continutul resumelui
+while(resumen.firstChild){
+    resumen.removeChild(resumen.firstChild)
+}
+
+//cu if asta verificam daca in obiectul cita avem toate datele introduse corect si nu avem vrun loc gol
+//si  dupa verificam daca am selectionat vrun produs cu lenght , si folosim false ca nu vrem sa ne dispara alerta
+if(Object.values(cita).includes("") || cita.servicios.length===0){
+monstrarAlerta("No has selecionada nigun serivicio o hacen falta datos", "error",".contenido-resumen",false)
+return
+}
+//Headin pentru servicioResumen
+
+const headingServicios= document.createElement("h3")
+headingServicios.textContent= "Los servicios que estas solicitando :"
+resumen.appendChild(headingServicios)
+
+
+//Formatam divu resumen
+const {nombre, fecha,hora ,servicios}= cita
+const nombreCliente = document.createElement("p")
+nombreCliente.innerHTML= `<span>Nombre: </span> ${nombre}`
+
+const fechaCita = document.createElement("p")
+fechaCita.innerHTML= `<span>Nombre: </span> ${fecha}`
+
+//Formatam data intro forma amiabila pentru user
+
+const fechaObj = new Date(fecha)
+
+const horaCita = document.createElement("p")
+horaCita.innerHTML= `<span>Nombre: </span> ${hora} Horas `
+
+//servicios cum sunt un array trebuie sa iteram
+
+servicios.forEach(servicio=> {
+    const {id,precio,nombre}= servicio
+    const contenedorServicio = document.createElement("div")
+
+    contenedorServicio.classList.add("contenedor-servicios")
+   
+
+    textoServico=document.createElement("p")
+    textoServico.textContent=nombre
+   
+    precioServicio=document.createElement("p")
+    precioServicio.innerHTML=`<span> Precio: </span> ${precio}`
+       
+        contenedorServicio.appendChild(textoServico)
+        contenedorServicio.appendChild(precioServicio)
+     
+        resumen.appendChild(contenedorServicio)
+})
+
+const footerServicios = document.createElement("h3")
+footerServicios.textContent= "Resumen de cita"
+resumen.appendChild(footerServicios)
+
+resumen.appendChild(fechaCita)
+resumen.appendChild(horaCita)
 }
