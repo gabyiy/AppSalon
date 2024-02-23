@@ -9,6 +9,7 @@ const pasoFinal = 3;
 
 //obiectu unde salvam toate citele
 const cita={
+id:"",
 nombre : "",
 fecha:"",
 hora:"",
@@ -32,6 +33,7 @@ function iniciarApp(){
 
     consultarAPI()// Consulteaza api in backend php
     nombreCliente() //adaugam numele clientului la obiectul cita
+    idCliente()
     selecionarFecha() //adaugam data la obiectul cita
     selecionarHora() //Adauga ora in obiectul cita
     mostrarResumen()//Ne arata resumele citei
@@ -220,6 +222,10 @@ else{
   
 }
 
+function idCliente(){
+    const idCliente = document.querySelector("#id")
+    cita.id= idCliente.value
+}
 function nombreCliente(){
     const nombre = document.querySelector("#nombre")
     cita.nombre= nombre.value
@@ -312,15 +318,32 @@ const {nombre, fecha,hora ,servicios}= cita
 const nombreCliente = document.createElement("p")
 nombreCliente.innerHTML= `<span>Nombre: </span> ${nombre}`
 
-const fechaCita = document.createElement("p")
-fechaCita.innerHTML= `<span>Nombre: </span> ${fecha}`
 
-//Formatam data intro forma amiabila pentru user
 
+//Formatam data in spaniol
 const fechaObj = new Date(fecha)
+const mess = fechaObj.getMonth()
+//punem plus doi din cauza ca folosim new date de doua ori si de fiecare data cand o folsim scade cate o zi
+const dia = fechaObj.getDay() +2;
+const year = fechaObj.getFullYear()
+
+const fechaUTC = new Date(Date.UTC(year,mess,dia))
+//cu opciones specificam ca dorim sa ne arate in forma de nume luni,marti etc
+const opciones ={weekday:"long",year:"numeric",month:"long",day:"numeric"}
+const fechaFormateada = fechaUTC.toLocaleDateString("es-es",opciones)
+
+
+const fechaCita = document.createElement("p")
+fechaCita.innerHTML= `<span>Nombre: </span> ${fechaFormateada}`
 
 const horaCita = document.createElement("p")
 horaCita.innerHTML= `<span>Nombre: </span> ${hora} Horas `
+
+//buton pentru a trimite cita catre backend
+const botonReservar = document.createElement("button")
+botonReservar.classList.add("boton")
+botonReservar.textContent="Reservar cita"
+botonReservar.onclick=reservarCita
 
 //servicios cum sunt un array trebuie sa iteram
 
@@ -349,4 +372,60 @@ resumen.appendChild(footerServicios)
 
 resumen.appendChild(fechaCita)
 resumen.appendChild(horaCita)
+resumen.appendChild(botonReservar)
+}
+
+async function reservarCita(){
+    //scoate nobre etc din cita
+    const {id,fecha,hora,servicios}= cita
+
+    const idServicios= servicios.map(servicio=>servicio.id)
+    
+    //creem variabila pentru a adauga datele
+    const datos = new FormData()
+
+//adaugam datele 
+datos.append("usuarioId",id)
+datos.append("fecha",fecha)
+datos.append("hora",hora)
+datos.append("servicios",idServicios)
+
+    //Facem petitie la api
+try{
+    const url = "http://localhost:3000/api/citas"
+
+    //primul parametru care il adaugam la fetch este url care dorim sa il accesam iar al doilea
+    //este methoda in care este construit url
+    const respuesta = await fetch(url,{
+        method:"POST",
+        body:datos
+    })
+
+    //iar aici primim resultadul din respesta
+
+    const resultado = await respuesta.json( )
+    console.log(resultado)
+    if(resultado.resultado){
+Swal.fire({
+  icon: "success",
+  title: "Cita creada",
+  text: "Tu cita fue creada corectamente",
+  button:"OK"
+  //iar dupa folosim then ca sa reincarce pagina si sa ne duca la meniu initial
+}).then(()=>{
+    setTimeout(()=>{
+        window.location.reload()
+
+    },3000)
+});
+    }
+}catch(error){
+
+    Swal.fire({
+      icon: "error",
+      title: "Error.",
+      text: "Ha habido un error al guardar la cita"
+    });
+}
+
 }

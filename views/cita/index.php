@@ -39,6 +39,7 @@
                     type="time"
                 />
             </div>
+            <input type="hidden" id="id" value="<?php echo $id; ?>">
         </form>
 </div>
 <div id="paso-3" class="seccion contenido-resumen">
@@ -55,7 +56,7 @@
 
     <!-- iar aici ce facem este practic sa adaugam variabla $script astfel putem sa utilizam js in pagina asta -->
 <?php 
-$script = " <script src='build/js/app.js'></script>
-
-";
+$script = "
+<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js'></script>
+<script src='build/js/app.js'></script>";
 ?>
