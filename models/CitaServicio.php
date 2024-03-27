@@ -1,19 +1,19 @@
 <?php 
 namespace Model;
 
-class CitaServicios extends ActiveRecord{
+class CitaServicio extends ActiveRecord{
 
 protected static $tabla="citasservicios";
 protected static $columnasDB=["id","citaId","servicioId"];
 
-public $id=null;
-public $citaId="";
-public $servicioId="";
+public $id;
+public $citaId;
+public $servicioId;
 
 public function __construct( $args = []) {
     $this->id=$args["id"]??null;
-    $this->citaId =$args["citaId"]??"";
-    $this->servicioId=$args["servicioId"]??"";
+    $this->citaId =$args["citaId"]??null;
+    $this->servicioId=$args["servicioId"]??null;
 }
 }
 

@@ -122,6 +122,13 @@ class ActiveRecord {
         return array_shift( $resultado ) ;
     }
 
+    //Functia pentru a cauta in baza de date citele 
+    public static function SQL($consulta) {
+        $query = $consulta;
+        $resultado = self::consultarSQL($query);
+        return $resultado  ;
+    }
+
     // Obtener Registros con cierta cantidad
     public static function get($limite) {
         $query = "SELECT * FROM " . static::$tabla . " LIMIT ${limite}";
@@ -141,7 +148,7 @@ class ActiveRecord {
         $query .= join("', '", array_values($atributos));
         $query .= "') ";
 
-        return json_encode(['query'=>$query]);
+        // return json_encode(['query'=>$query]);
         // Resultado de la consulta
         $resultado = self::$db->query($query);
         return [

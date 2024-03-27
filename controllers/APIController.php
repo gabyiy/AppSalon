@@ -3,7 +3,7 @@
 namespace Controllers;
 
 use Model\Cita;
-use Model\CitaServicios;
+use Model\CitaServicio;
 use Model\Servicio;
 
 class APIController{
@@ -17,7 +17,6 @@ class APIController{
     }
     public static function guardar(){
         $cita = new Cita($_POST);
-
         //Salveaza cita si returneaza idul
         $resultado = $cita->guardar();
         $id=$resultado["id"];
@@ -30,17 +29,26 @@ class APIController{
                 "citaId"=>$id,
                 "servicioId"=> $idServicio
             ];
-            $citaServicio= new CitaServicios($args);
+            $citaServicio= new CitaServicio($args);
             $citaServicio->guardar();
         }
         //Returnam un raspuns
-        $respuesta=[
-            "resultado"=>$resultado
-        ];
+        echo json_encode(['resultado' => $resultado]);
 
-        //transforma respuesta in json pentru a putea fi citit in js 
-        echo json_encode($respuesta);
     }
 
+    public static function eliminar(){
+        if($_SERVER["REQUEST_METHOD"]==="POST");
+        //salvam idul pe care il primim prin [post]
+        $id= $_POST["id"];
+
+        //gasim id cu functia din cita 
+        $cita =Cita::find($id);
+        $cita->eliminar();
+        //dupa ce am eliminat cita spunem sa ne redirectioneze la acxeasi pagina 
+
+        header("Location:" .$_SERVER["HTTP_REFERER"]);
+    }
+ 
 }
 ?>

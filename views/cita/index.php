@@ -1,6 +1,8 @@
 <h1 class="nombre-pagina">Crear cita</h1>
     <p class="descripcion-pagina">Elige tu servicios y coloca tus datos</p>
 
+   <?php include_once __DIR__ . "/../templates/barra.php" ?>
+        
     <div id="app">
         <nav class="tabs">
             <!-- creem propriu nostru atribut html data-paso ,pe care o sa il facem functional cu javascript
